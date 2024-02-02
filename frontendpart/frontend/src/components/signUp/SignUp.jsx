@@ -5,26 +5,21 @@ import axios from 'axios'
 import './SignUp.css'
 function SignUp() {
   const navigate= useNavigate()
-    const [formData, setFormData] = useState({
-        username: '',
-        email: '',
-        password: '',
-      });
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
+  
     
-      const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-          ...prevData,
-          [name]: value,
-        }));
-      };
-    
-      const handleSubmit = (e) => {
+      const handleSubmit = async (e) => {
         e.preventDefault();
-        // Add your signup logic here using formData
-         axios.post("http://localhost:5000/register",formData).then(result=> {console.log(result)
-         navigate("/login")}).catch(err=> console.log(err))
-        console.log('Form submitted:', formData);
+        try {
+          await axios.post("http://localhost:3001/register", {username,email,password});
+          alert('User registered successfully.');
+          navigate("/login")
+        } catch (error) {
+          console.error(error);
+          alert('Registration failed.');
+        }
       };
   return (
     <>
@@ -35,8 +30,8 @@ function SignUp() {
               <input
                 type="text"
                 name="username"
-                value={formData.username}
-                onChange={handleChange}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </label>
             <label className='labelinline'>
@@ -44,8 +39,8 @@ function SignUp() {
               <input
                 type="email"
                 name="email"
-                value={formData.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </label>
             <label className='labelinline'>
@@ -54,8 +49,9 @@ function SignUp() {
               className='inputtext'
                 type="password"
                 name="password"
-                value={formData.password}
-                onChange={handleChange}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                
               />
             </label>
             <button type="submit">Sign Up</button>

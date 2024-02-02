@@ -1,45 +1,39 @@
 import React,{useState} from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
-// import './SignUp.css'
+import Home from '../home/Home';
 
 function Login() {
 const navigate=useNavigate()
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-      });
-    
-      const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-          ...prevData,
-          [name]: value,
-        }));
-      };
-    
-      const handleSubmit = (e) => {
+const [password, setPassword] = useState('');
+const [email, setEmail] = useState('');
+const [token, setToken] = useState('');
+
+      const handleSubmit = async (e) => {
         e.preventDefault();
-        // Add yourLogin logic here using formData
-         axios.post("http://localhost:5000/login",formData).then(result=>{console.log(result)
-        if(result.data==="Success"){
-          navigate("/home")
-          console.log("logged in successfully")
-        }}
-        ).catch(err=> console.log(err))
-        console.log('Form submitted:', formData);
+        try {
+          const response = await axios.post("http://localhost:3001/login", { email, password });
+          setToken(response.data.token);
+          alert('Login successful.');
+        } catch (error) {
+          console.error(error);
+          alert('Login failed.');
+        }
       };
+
   return (
     <>
-        <div className="signup-form-container">
+        {
+          token? <Home token={token}/>:<div className="signup-form-container">
           <form onSubmit={handleSubmit} className="signup-form">
             <label className='labelinline'>
               Email:
               <input
                 type="email"
                 name="email"
-                value={formData.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                
               />
             </label>
             <label className='labelinline'>
@@ -48,14 +42,16 @@ const navigate=useNavigate()
               className='inputtext'
                 type="password"
                 name="password"
-                value={formData.password}
-                onChange={handleChange}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                
               />
             </label>
             <button type="submit">Login</button>
           </form>
          
         </div>
+        }
     </>
   )
 }
